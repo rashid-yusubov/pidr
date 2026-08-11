@@ -1,5 +1,5 @@
 <p align="center">
-      <img src="favicon\android-chrome-192x192.png" alt="PIDR Logo">
+      <img src="assets\icons\android-chrome-192x192.png" alt="PIDR Logo">
   </picture>
 </p>
 <h1 align="center">
