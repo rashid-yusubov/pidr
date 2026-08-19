@@ -218,7 +218,7 @@ export function renderMovies() {
 
   if (!sortedMovies.length) {
     const title = state.movies.length ? "Ничего не найдено" : "Пока нет фильмов";
-    const text = state.movies.length ? "Попробуйте изменить запрос." : "Администратор может добавить первый фильм.";
+    const text = state.movies.length ? "Попробуйте изменить запрос." : "Авторизованный пользователь может добавить первый фильм.";
     elements.movieList.append(createEmptyState(title, text));
     return;
   }
@@ -609,8 +609,13 @@ function getMovieFormRatings(container) {
 async function saveMovieForm(event, refs, options) {
   event.preventDefault();
 
-  if (!isAdmin()) {
-    setStatus("Только администратор может менять фильмы.", "error", "movieEdit");
+  if (options.mode === "edit" && !isAdmin()) {
+    setStatus("Только администратор может редактировать фильмы.", "error", "movieEdit");
+    return;
+  }
+
+  if (options.mode === "create" && !state.currentUser) {
+    setStatus("Чтобы добавить фильм, нужно войти в аккаунт.", "error", "movieAdd");
     return;
   }
 

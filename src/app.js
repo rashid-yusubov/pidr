@@ -134,7 +134,7 @@ function bindEvents() {
   elements.sortDirection.addEventListener("click", toggleSortDirection);
   elements.clearAll.addEventListener("click", clearAllData);
   elements.openAddMovie.addEventListener("click", () => {
-    if (isAdmin()) {
+    if (state.currentUser) {
       openMovieDialog();
       renderLookupRecentSearches();
     }
@@ -260,15 +260,17 @@ function openSettingsDialog(section = "account") {
 
 function openSettingsSection(section) {
   const normalizedSection = !isAdmin() && section !== "account" ? "account" : section;
+  const allowFilmsSection = state.currentUser && section === "films";
+  const normalizedSectionSafe = allowFilmsSection ? "films" : normalizedSection;
 
   elements.settingsTabButtons.forEach((button) => {
-    const isActive = button.dataset.settingsTab === normalizedSection;
+    const isActive = button.dataset.settingsTab === normalizedSectionSafe;
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
   });
 
   elements.settingsPanels.forEach((panel) => {
-    const isActive = panel.dataset.settingsPanel === normalizedSection;
+    const isActive = panel.dataset.settingsPanel === normalizedSectionSafe;
     panel.hidden = !isActive;
     panel.classList.toggle("settings-panel-active", isActive);
   });
@@ -296,12 +298,12 @@ function updateRoleUi() {
   elements.currentUserBadge.innerHTML = state.currentUser
     ? `${getUserAvatarMarkup(state.currentUser, "user-avatar-sm")}<span class="user-badge-name">${escapeHtml(getCurrentUserLabel())}</span>`
     : "";
-  elements.openAddMovie.hidden = !isAdmin();
+  elements.openAddMovie.hidden = !state.currentUser;
   elements.openSettings.hidden = !state.currentUser;
   elements.clearAll.hidden = !isAdmin();
   elements.settingsTabUsers.hidden = !isAdmin();
   elements.settingsTabTmdb.hidden = !isAdmin();
-  elements.settingsTabFilms.hidden = !isAdmin();
+  elements.settingsTabFilms.hidden = !state.currentUser;
 }
 
 function renderUsersList() {
